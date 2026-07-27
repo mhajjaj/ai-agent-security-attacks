@@ -1,0 +1,18 @@
+# Competition dependencies (stub - will be refined after SDK inspection)
+# The actual SDK will be provided by Kaggle at runtime.
+# Below are common packages useful for attack search algorithms.
+
+numpy>=1.24.0
+scipy>=1.10.0
+
+# LLM client for LLM-assisted candidate generation
+openai>=1.0.0
+
+# Evolutionary / search utilities
+deap>=1.4.0
+
+# Data structures for archive-based methods
+pandas>=2.0.0
+
+# Testing
+pytest>=7.4.0
