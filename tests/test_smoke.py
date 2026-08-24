@@ -54,9 +54,31 @@ def test_candidates_are_deduped():
 
 
 def test_finds_something():
-    """The mock is permissive, so the exfil/destructive phases must fire."""
+    """The mock is permissive, so several phases must fire."""
     findings = _run()
     assert len(findings) > 0, "expected at least one firing candidate on the mock"
+
+
+def test_has_multistep_exfil_and_single_step_chains():
+    """Phase 1 emits 2-message read->post exfil chains; other phases emit
+    single-message chains. Both shapes should appear."""
+    findings = _run()
+    lengths = {len(f.user_messages) for f in findings}
+    assert 2 in lengths, "expected a multi-step (read->post) exfil chain"
+    assert 1 in lengths, "expected a single-message injection/destructive chain"
+
+
+def test_exfil_chain_reads_before_posting():
+    """Every exfil chain (one that instructs an HTTP POST) must read secret.txt
+    first, or EXFILTRATION cannot fire on the real predicate."""
+    findings = _run()
+    exfil = [f for f in findings
+             if any("http post" in m.lower() for m in f.user_messages)]
+    assert exfil, "expected at least one exfil (HTTP POST) chain"
+    for f in exfil:
+        first = f.user_messages[0].lower()
+        assert "secret.txt" in first and "read" in first, \
+            f"exfil chain does not read secret.txt first: {f.user_messages}"
 
 
 def test_respects_finding_cap():
