@@ -3,9 +3,10 @@
 Usage:
     python3 local_test/run_local.py
 
-Proves the algorithm imports, runs all four phases without crashing, respects
-the budget/dedup logic, and returns AttackCandidate objects. It does NOT prove
-real attack efficacy — the mock agent is permissive by construction.
+Proves the algorithm imports, builds its curated candidate set, runs the
+optional verify pass without crashing, respects the dedup/cap logic, and returns
+AttackCandidate objects. It does NOT prove real attack efficacy — the mock agent
+is permissive by construction.
 """
 
 import os
@@ -31,7 +32,7 @@ def main():
     findings = algo.run(env, config)
 
     print("\n" + "=" * 60)
-    print(f"RETURNED {len(findings)} unique-cell candidates")
+    print(f"RETURNED {len(findings)} candidates (deduped, best-first)")
     print("=" * 60)
     for f in findings[:8]:
         print("  ", f.user_messages)
