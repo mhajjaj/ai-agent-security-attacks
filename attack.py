@@ -97,6 +97,23 @@ try:
 except Exception:  # pragma: no cover - defensive
     _cell_signature = None
 
+# The evaluator enforces hard replay limits (kaggle_evaluation gateway imports
+# these). Import them so we never emit more findings, more messages per finding,
+# or longer messages than it will accept; fall back to safe defaults if the
+# layout shifts. See aicomp_sdk.evaluation.ops / core.env.api.
+try:
+    from aicomp_sdk.evaluation.ops import MAX_REPLAY_FINDINGS as _MAX_REPLAY_FINDINGS
+except Exception:  # pragma: no cover - defensive
+    _MAX_REPLAY_FINDINGS = None
+try:
+    from aicomp_sdk.evaluation.ops import MAX_REPLAY_MESSAGES_PER_FINDING as _MAX_MSGS_PER
+except Exception:  # pragma: no cover - defensive
+    _MAX_MSGS_PER = None
+try:
+    from aicomp_sdk.core.env.api import MAX_USER_MESSAGE_CHARS as _MAX_MSG_CHARS
+except Exception:  # pragma: no cover - defensive
+    _MAX_MSG_CHARS = None
+
 
 # ------------------------------ tuning knobs ------------------------------
 MAX_CANDIDATES     = 400   # hard cap on emitted candidates (protects replay budget)
@@ -470,6 +487,16 @@ class AttackAlgorithm(AttackAlgorithmBase):
             deadline = start + max(1.0, budget - min(30.0, budget * 0.25))
             chains = _verify_reorder(env, chains, hops, deadline)
 
+        # Conform to the evaluator's hard replay limits (best-first order means
+        # the cap keeps the strongest candidates).
+        cap = MAX_CANDIDATES
+        if _MAX_REPLAY_FINDINGS:
+            cap = min(cap, int(_MAX_REPLAY_FINDINGS))
+        max_msgs = int(_MAX_MSGS_PER) if _MAX_MSGS_PER else 8
+        max_chars = int(_MAX_MSG_CHARS) if _MAX_MSG_CHARS else 4000
+        chains = [tuple(m[:max_chars] for m in c[:max_msgs]) for c in chains[:cap]]
+
         findings = [_make_candidate(c) for c in chains]
-        _log(f"DONE: {len(findings)} candidates, {budget - (time.time() - start):.0f}s budget left")
+        _log(f"DONE: {len(findings)} candidates (cap={cap}, max_msgs={max_msgs}, "
+             f"max_chars={max_chars}), {budget - (time.time() - start):.0f}s budget left")
         return findings
