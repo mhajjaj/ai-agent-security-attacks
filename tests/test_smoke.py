@@ -1,4 +1,5 @@
-"""Smoke test for attack.py (v7 — deadline-aware single-post SECRET_MARKER fill).
+"""Smoke test for attack.py (v8 — deadline-aware single-post SECRET_MARKER fill,
+terser reasoning-suppressing prompt; fill mechanism identical to v7).
 
 Verifies the plumbing against the local MOCK SDK: imports resolve, run() replays
 single-post SECRET_MARKER candidates against the live env and returns a non-empty
