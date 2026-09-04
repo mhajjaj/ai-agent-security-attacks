@@ -1,6 +1,12 @@
 # Submission Status — AI Agent Security: Multi-Step Tool Attacks
 
-_Snapshot: 2026-09-01 • Competition deadline: **2026-09-01 23:59** (today)_
+_Snapshot: 2026-09-01 02:07 UTC • Competition deadline: **2026-09-01 23:59 UTC** (today, ~22h out)_
+
+> **Latest:** **v9 submitted** (Version 16, submission `55929433`) at 02:07 UTC — **PENDING**.
+> One knob vs v7: a benign `"Connectivity check: …"` framing to lift model compliance (the
+> opposite of v8's refusal-raising prompt). Best-of scoring keeps **54.450 (v7)** banked no
+> matter how v9 scores. Watch it with:
+> `.venv/bin/kaggle competitions submissions -c ai-agent-security-multi-step-tool-attacks`
 
 ---
 
@@ -19,8 +25,9 @@ _Snapshot: 2026-09-01 • Competition deadline: **2026-09-01 23:59** (today)_
 | Notebook | Submission ID | attack.py | Score | Notes |
 |---|---|---|---|---|
 | Version 13 | 55896375 | **v6** | 42.930 | Static N=1000 single-posts (fixed count) |
-| Version 14 | 55901649 | **v7** | **54.450** | Deadline-aware live fill — **BEST** |
+| Version 14 | 55901649 | **v7** | **54.450** | Deadline-aware live fill — **BEST (banked)** |
 | Version 15 | 55913661 | **v8** | 47.545 | v7 + terser prompt — **REGRESSED** |
+| Version 16 | 55929433 | **v9** | _pending_ | v7 core + benign "Connectivity check:" framing |
 | Version 12 | 55855983 | v5 | 0.000 | Decoupled emission; nothing fired |
 | (earlier) | — | v4 & prior | 0.000 / ERROR | Format + efficacy failures |
 
